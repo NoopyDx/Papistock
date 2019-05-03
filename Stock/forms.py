@@ -11,8 +11,8 @@ from crispy_forms.layout import Layout, Fieldset, Div, Field
 # Formulaire ajout stock
 class ProdForm(forms.Form):
    BDD_PARFUM = []
-   #choices = [('Sorbet', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=True).order_by('parfum_text')])]+[('Glace', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=False).order_by('parfum_text')])]
-   #parfum_text = forms.CharField(label="Parfum", required=True,widget=forms.Select(attrs={'class':'form-control'}, choices=choices ))
+   choices = [('Sorbet', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=True).order_by('parfum_text')])]+[('Glace', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=False).order_by('parfum_text')])]
+   parfum_text = forms.CharField(label="Parfum", required=True,widget=forms.Select(attrs={'class':'form-control'}, choices=choices ))
    no_lot = forms.CharField(label="N° de lot", initial = "", widget=TextInput(attrs={'size':10,'class':'form-control'}))
    poids = forms.IntegerField(label="Poids (g)", initial=1000, widget=NumberInput(attrs={'size':3,'class':'form-control span2'}))
    date_prod = forms.DateField(label='Date de production', initial = datetime.now(), widget=DatePickerInput(format='%d/%m/%Y',attrs={'class':'form-control'}))
