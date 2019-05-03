@@ -1,0 +1,152 @@
+<html>
+{% load extra %}
+{% load static %}
+
+<!-- Import de bootstrap + jQuery-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+</script>
+
+
+
+<!-- Import css personnalisé -->
+<link rel="stylesheet" type="text/css" href="{% static 'Stock/style.css' %}">
+
+<!-- Import font -->
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+<!-- Import icones FontAwesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+
+<!-- Header -->
+<header>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><img src="/static/images/transpa.png" width="125" height="50" alt=""></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/accueil">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stocks">Gestion de stocks</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/fabrication">Fabrication<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/commandes">Commandes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/etiquettes">Etiquettes</a>
+                </li>
+            </ul>
+        <!-- </div>
+        <div class="navbar-collapse collapse"> -->
+            
+                <div class="navbar-nav ml-auto p-2">
+                    {% if user.is_authenticated %}
+                    <span class="navbar-text">
+                            Connecté en tant que {{ user.username }}
+                            <a class="logout-ic" href="{% url 'logout' %}" style="padding-left:10px">
+                                    <i class="fas fa-sign-out-alt" style="color:white"></i>
+                                </a>
+                    </span>
+                    {% endif %}
+                </div>            
+            </div>
+    </nav>
+</header>
+
+<body>
+    <section class="container">
+    <h1 style="text-align:center; color:white; font-family: 'Quicksand', sans-serif; padding-top:20px;"> Visualisation des besoins de production</h1>
+    <section class="container" style="background-color:rgb(229,227,225); border-radius:25px; padding: 40px">
+    <div class="row">
+    <div class="col-md-6  ">
+          <h2 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A">FABRICATION</h2>
+          <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000">Sorbet</h4>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="tabHeaderStyle">Parfum</th>
+                <th scope="col" class="tabHeaderStyle">Production</th>
+                <th scope="col" class="tabHeaderStyle">Produit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for parfum in parfum_BDD %}
+              {% if parfum.sorbet == True %}
+              <tr>
+                <th style="text-align:center" scope="row">{{parfum.parfum_text}}</th>
+                <td style="text-align:center">{{ glace_BDD|count_todo2:parfum.id }}</td>
+                <td style="text-align:center">
+                  <form action="{% url 'test' parfum.parfum_text glace_BDD|count_todo2:parfum.id %}" method="post">
+                    {% csrf_token %}
+                    {% comment %} <input name="parfum" type="hidden" value="{{parfum.parfum_text}}">
+                    <input name="nombre" type="hidden" value="{{glace_BDD|count_todo2:parfum.id}}"> {% endcomment %}
+                    <button type="submit" class="btn btn-info btn-sm" {% if glace_BDD|count_todo2:parfum.id == 0 %}
+                      disabled {% endif %}>Ajouter en stock</button>
+                  </form>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+          <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000">Glace</h4>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="tabHeaderStyle">Parfum</th>
+                <th scope="col" class="tabHeaderStyle">Production</th>
+                <th scope="col" class="tabHeaderStyle">Produit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for parfum in parfum_BDD %}
+              {% if parfum.sorbet == False %}
+              <tr>
+                <th style="text-align:center" scope="row">{{parfum.parfum_text}}</th>
+                <td style="text-align:center">{{ glace_BDD|count_todo2:parfum.id }}</td>
+                <td style="text-align:center">
+                  <form action="{% url 'test' parfum.parfum_text glace_BDD|count_todo2:parfum.id %}" method="post">
+                    {% csrf_token %}
+                    {% comment %} <input name="parfum" type="hidden" value="{{parfum.parfum_text}}">
+                    <input name="nombre" type="hidden" value="{{glace_BDD|count_todo2:parfum.id}}"> {% endcomment %}
+                    <button type="submit" class="btn btn-info btn-sm" {% if glace_BDD|count_todo2:parfum.id == 0 %}
+                      disabled {% endif %}>Ajouter en stock</button>
+                  </form>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-6">
+            <h2 style = "text-align:center;"> Conseils </h2>
+            <p> Sur la gauche, on retrouve tous les bacs commandés et qui doivent être produit</p>
+            <p style="text-align:center"><i style="color:red; font-size:50px;" class="fas fa-exclamation-triangle"></i></p>
+            <p style="text-align:center">Ne pas oublier d'ajouter le poids et le numéro de lot <a href="/stocks">ici</a> </p>
+        </div>
+    </div>
+    
+    </section>
+    </section>
+</body>
+
+</html>

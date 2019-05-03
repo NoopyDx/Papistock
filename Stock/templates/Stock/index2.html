@@ -1,0 +1,441 @@
+<html>
+{% load extra %}
+{% load static %}
+
+<!-- Import de bootstrap + jQuery-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+  crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+  crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+  crossorigin="anonymous"></script>
+
+
+
+<!-- Import css personnalisé -->
+<link rel="stylesheet" type="text/css" href="{% static 'AjaxTest/style.css' %}">
+
+<!-- Import font -->
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+<!-- Import icones FontAwesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+  crossorigin="anonymous">
+
+
+<!-- Header -->
+<header>
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><img src="/static/images/transpa.png" width="125" height="50" alt=""></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">DashBoard <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#commande">Commandes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Ajout des stocks</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+        Contact : dwatte@papilla.fr
+      </span>
+    </div>
+  </nav>
+</header>
+
+<body>
+  <section class="container" style="background-color:rgb(229,227,225)">
+    <h1 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">CRM Papilla - Test Platform 1</h1>
+    <div style="padding-top:10px">
+      <div class="row">
+        <div class="col-sm-6">
+          <h2 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Les stocks</h2>
+          <table class="table table-sm table-dark table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="tabHeaderStyle">Parfum</th>
+                <th scope="col" class="tabHeaderStyle">Bacs disponible</th>
+                <th scope="col" class="tabHeaderStyle">Bacs à livrer</th>
+                <th scope="col" class="tabHeaderStyle">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for parfum in parfum_BDD %}
+              <tr>
+                <th scope="row">{{parfum.parfum_text}}</th>
+                <td style="text-align:center" {% if glace_BDD|count_disponible:parfum.id == 0 %} class="bg-danger" {% endif %}>{{ glace_BDD|count_disponible:parfum.id }}</td>
+                <td style="text-align:center">{{ glace_BDD|count_ordered:parfum.id }}</td>
+                <td style="text-align:center">{{ glace_BDD|count_in_stock:parfum.id }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-5">
+          <h2 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Les commandes</h2>
+          <table class="table table-sm table-dark table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="tabHeaderStyle">Parfum</th>
+                <th scope="col" class="tabHeaderStyle">Bacs à produire</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for parfum in parfum_BDD %}
+              <tr>
+                <th scope="row">{{parfum.parfum_text}}</th>
+                <td style="text-align:center">{{ glace_BDD|count_todo2:parfum.id }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Full table {% endcomment %}
+    <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Détails des stocks</h3>
+    {% comment %} <div class="col-sm">
+      <h2 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Les stocks</h2>
+      <table class="table table-sm table-dark table-striped">
+        <thead>
+          <tr>
+            <th scope="col" class="tabHeaderStyle">Parfum</th>
+            <th scope="col" class="tabHeaderStyle">Nbre bacs disponible</th>
+            <th scope="col" class="tabHeaderStyle">Nbre bacs commandées</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parfum in parfum_BDD%}
+          <tr>
+            <th scope="row">{{parfum.parfum_text}}</th>
+            <td style="text-align:center" {% if glace_BDD|count_disponible:parfum.id==0 %} class="bg-danger" {% endif
+              %}>{{ glace_BDD|count_disponible:parfum.id }}</td>
+            <td style="text-align:center">{{ glace_BDD|mass_disponible:parfum.id }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div> {% endcomment %}
+    {% for parfum in parfum_BDD%}
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#demo-{{parfum.id}}" aria-expanded="true"
+              aria-controls="demo-{{parfum.id}}">
+              {{ parfum }}
+            </button>
+          </h5>
+        </div>
+        
+        <div id="demo-{{parfum.id}}"  class="collapse assign-me" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col" style="text-align:center">Parfum</th>
+                <td style="text-align:center">Poids</th>
+                <td style="text-align:center">Date de Production</th>
+                <td style="text-align:center">DLC</th>
+                <td style="text-align:center">Statut</th>
+                <td style="text-align:center">N° de Lot</th>
+                <td style="text-align:center">Commandé par</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for g in glace_BDD|in_category:parfum.id %}
+              {% if g.status == 'Ordered' or g.status == 'Disponible' %}
+              <tr>
+                <th scope="row" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{g.parfum_text}}</th>
+                <td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{g.poids}}kg</td>
+                <td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{g.date_prod | date:'d/m/Y'}}</td>
+                <td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{g.date_prod | date:'d/m/Y'}}</td>
+                <td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{g.status }}</td>
+                <td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}> N°{{g.no_lot }}</td>
+                {% if g.status == "Ordered"%}<td style="text-align:center" {% if g.status == 'Todo'%} class = 'table-danger' {% elif g.status == 'Ordered' %} class = 'table-warning' {% else %} class = 'table-success' {% endif %}>{{ g.franchise_name }}</td>{% endif %}
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor%}
+
+    <!-- Ajout des stocks -->
+    <!-- <h2>Ajouter du stock</h2>
+    <form action="" method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" name="b-send">Créer</button>
+    </form> -->
+<h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Tableau des commandes</h3>
+  <table class="table table-sm table-dark table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="tabHeaderStyle">Parfum</th>
+                <th scope="col" class="tabHeaderStyle">Date de commande</th>
+                <th scope="col" class="tabHeaderStyle">Franchise/client</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for parfum in parfum_BDD %}
+              {% for g in glace_BDD|in_category:parfum.id %}
+              {% if g.status == 'Todo'%}
+              <tr>
+                <th scope="row">{{parfum.parfum_text}}</th>
+                <td style="text-align:center">{{ g.commande_time }}</td>
+                <td style="text-align:center">{{ g.franchise_name }}</td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+    <!-- Énumération de tous les fields puis affichage de chaque parfum avec le nombre de bacs disponibles -->
+    <!-- <form action="" method="POST">
+      {% csrf_token %}
+      Le premier Field sert en attendant l'Auth, on doit rentre le nom du commanditaire
+      <div>{{ form3 }}</div>
+      {% for field in form2 %}
+      <div>
+        {{ field.label }} : {{ field }}
+        Disponible : {{ glace_BDD|in_category2_dispo:field.label }}
+      </div>
+      {% endfor %}
+      <button type="submit" name="order">Commander</button>
+    </form> -->
+
+
+
+    {% load crispy_forms_tags %}
+
+    <!-- Ajout stock tmp -->
+    <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Gestion des stocks</h3>
+    <a id="commande"></a>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#lotModal">Ajouter un lot</button>
+    <div class="modal fade " id="lotModal" tabindex="-1" role="dialog" aria-labelledby="lotModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+          <form action="" method="POST">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Nouveau lot de production</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <button class="btn btn-success btn-sm" id="bt_add_sorte" type="button">+</button>
+            {% csrf_token %}
+
+            {{ form.management_form|crispy }}
+
+
+
+            <div class="modal-body" id="corps">
+
+              <!-- <div class="row">
+                {% for f in form %}
+                {{ f.media }}
+                <div class="col-md-2 ml-auto">{{ f.parfum_text.label }}</div>
+                <div class="col-md-2 ml-auto">{{ f.no_lot.label }}</div>
+                <div class="col-md-3 ml-auto">{{ f.poids.label }}</div>
+                <div class="col-md-4 ml-auto" id="datepicker">{{ f.date_prod.label }}</div>
+                <div class="col-md-1 ml-auto"></div>
+
+                {% endfor %}
+              </div> -->
+
+              {% for f in form %}
+              {{ f.media }}
+              <div class="form-group">
+                  
+                <!-- <div class="row">
+                  <div class="col-md-2 ml-auto">{{ f.parfum_text}}</div>
+                  <div class="col-md-2 ml-auto">{{ f.no_lot }}</div>
+                  <div class="col-md-3 ml-auto">{{ f.poids}}</div>
+                  <div class="col-md-4 ml-auto">{{ f.date_prod}}</div>
+                  <div class="col-md-1 ml-auto"></div> 
+                </div> -->
+
+                <div class="row formrow">
+                  {{f|crispy}}
+                </div>
+
+                {% endfor %}
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary" name="b-send">Confirmer</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Element à copier pour un ajout au formset -->
+        <div style="display:none;">
+          <div id="eform" class="form-group">
+            <div class="row formrow">
+              <!-- {% for f in form %}
+              <div class="col-md-2 ml-auto">{{ f.parfum_text}}</div>
+              <div class="col-md-2 ml-auto">{{ f.no_lot }}</div>
+              <div class="col-md-3 ml-auto">{{ f.poids }}</div>
+              <div class="col-md-4 ml-auto">{{ f.date_prod }}</div>
+              {% endfor%} -->
+
+              {{ form.empty_form|crispy}}
+
+              <div class='col-md-1 ml-auto btn btn-sm bt_rm_sorte'>
+                <i class='fa fa-trash'></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <!-- Script relatif à l'ajout de stock -->
+
+    <script>
+      $(document).ready(function(){
+
+      /**************************************************************************
+      *
+      *                                      Gestion ADD REMOVE Formset 
+      *
+      ***************************************************************************/
+  
+      index_form = function( fset, index ){
+  
+          $(fset).find(':input').each(function() {
+              var name = $(this).attr('name').replace( new RegExp('(\_\_prefix\_\_|\\d)') , index );
+              var id = 'id_' + name;
+              $(this).attr({'name': name, 'id': id});
+          });
+  
+          $(fset).find('label').each(function() {
+              var newFor = $(this).attr('for').replace( new RegExp('(\_\_prefix\_\_|\\d)') , index );
+              var id = 'label_' + newFor;
+              $(this).attr({'id':id, 'for':newFor});
+          });
+  
+      }
+  
+      reindex_formset = function( formset_zone ){
+  
+          var formset = $(formset_zone).find( '.formrow' );
+          for( var cpt=0;cpt<formset.length;cpt++ ){
+              index_form( formset[cpt], cpt );
+          };
+  
+          $("#id_form-TOTAL_FORMS").val( parseInt( cpt ) );
+  
+      };
+  
+  
+  
+      /**************************************************************************
+      *
+      *                               Gesion Des evenements formulaire
+      *
+      ***************************************************************************/
+  
+  
+      set_event = function(){
+              //Bind le(s) bt delete sorte
+              $(".bt_rm_sorte").on('click',function(){
+                  $(this).parents(".formrow").remove();
+                  reindex_formset( "#corps" );
+              });
+      };
+  
+      $("#bt_add_sorte").on('click',function(){
+  
+          //Copy eform
+          $( "#eform" ).clone(true).appendTo( $("#corps") );
+  
+          reindex_formset( "#corps" );
+  
+      });
+  
+      set_event();
+   
+  });
+</script>
+
+
+
+    <!-- Pop-up form commande bacs -->
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#commandModal" data-whatever="@getbootstrap">Commander
+      des bacs</button>
+
+    <div class="modal fade" id="commandModal" tabindex="-1" role="dialog" aria-labelledby="commandModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="" method="POST">
+
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Nouvelle commande</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <div class="form-group">
+                {{ form3 }}
+              </div>
+              {% for field in form2 %}
+              <div class="form-group">
+                {{ field.label }} : {{ field }}
+                Disponible : {{ glace_BDD|in_category2_dispo:field.label }}
+              </div>
+              {% endfor %}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary" name="order">Confirmer</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Génération de PDF -->
+    <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Etiquettes </h3>
+    <button> <a href="{% url 'pdf' %}">Générer étiquette</a></button>
+    <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Bon de livraison</h3>
+    <div>Ajouter un FORM pour choisir les bacs à mettre sur le BL ? </div>
+    <button> <a href="{% url 'pdf' %}">Générer le Bon de Livraison</a></button>
+
+
+    <!-- Système d'OAuth -->
+    <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : brown">Authentification</h3>
+    <div>A FAIRE</div>
+  </section>
+</body>
+
+</html>

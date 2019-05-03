@@ -1,0 +1,566 @@
+<html>
+{% load extra %}
+{% load static %}
+
+<!-- Import de bootstrap + jQuery-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+  integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+  integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+</script>
+
+
+
+
+<!-- Import css personnalisé -->
+<link rel="stylesheet" type="text/css" href="{% static 'Stock/style.css' %}">
+<!-- Import JS -->
+<script type="text/javascript" src="{% static 'Stock/script.js' %}"></script>
+<!-- Import font -->
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+<!-- Import icones FontAwesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+  integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+
+<!-- Header -->
+<header>
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><img src="/static/images/transpa.png" width="125" height="50" alt=""></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+      aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/accueil">Accueil</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/stocks">Gestion de stocks<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/fabrication">Fabrication</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/commandes">Commandes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/etiquettes">Etiquettes</a>
+        </li>
+      </ul>
+      <!-- </div>
+    <div class="navbar-collapse collapse"> -->
+
+      <div class="navbar-nav ml-auto p-2">
+        {% if user.is_authenticated %}
+        <span class="navbar-text">
+          Connecté en tant que {{ user.username }}
+          <a class="logout-ic" href="{% url 'logout' %}" style="padding-left:10px">
+            <i class="fas fa-sign-out-alt" style="color:white"></i>
+          </a>
+        </span>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<body>
+  <section class="container">
+    <h1 style="text-align:center; color:white; font-family: 'Quicksand', sans-serif; padding-top:20px;"> Visualisation
+      des stocks</h2>
+      <section class="container" style="background-color:rgb(229,227,225); border-radius:25px; padding: 40px">
+        <div class="row" style="">
+
+          <div class="col-md-12  ">
+            <h3 style="text-align:center; font-family: 'Quicksand'; margin-bottom: 40px"> Pour ajouter des stocks
+              cliquez ici</h3>
+            {% if messages %}
+            <div class="messages" class="text-center"
+              style="padding-top:30px;text-align:center; font-family: 'Quicksand', sans-serif; color : black;">
+              {% for message in messages %}
+              <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% load crispy_forms_tags %}
+
+            <!-- Ajout stock tmp -->
+            <div class="text-center">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#lotModal">Ajouter un
+                lot</button>
+            </div>
+
+            <div class="modal fade " id="lotModal" tabindex="-1" role="dialog" aria-labelledby="lotModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+
+                  <form action="" method="POST">
+                    <div class="modal-header">
+                      <div class='col-md-5'>
+
+                        <h5 class="modal-title" id="exampleModalLabel">Nouveau lot de production</h5>
+                      </div>
+                      <div class='col-md-3'>
+                        <button class="btn btn-success btn-sm" id="bt_add_sorte" type="button">Ajouter une
+                          ligne</button>
+
+                      </div>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+
+                    {% csrf_token %}
+
+                    {{ form.management_form|crispy }}
+
+
+
+                    <div class="modal-body" id="corps">
+
+                      <div class="form-group">
+
+                        <div class="row formrow">
+                          <div class='col-md-3'>
+                            {{form4.parfum_text.label}}
+                          </div>
+                          <div class='col-md-3'>
+                            {{form4.no_lot.label}}
+                          </div>
+                          <div class='col-md-2'>
+                            {{form4.poids.label}}
+                          </div>
+                          <div class='col-md-3'>
+                            {{form4.date_prod.label}}
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {% for f in form %}
+                      {{ f.media }}
+                      <div class="form-group" id="rlot">
+
+                        <div class="row formrow" id="foro">
+                          <div class='col-md-3'>
+                            {{f.parfum_text}}
+                          </div>
+                          <div class='col-md-3'>
+                            {{f.no_lot}}
+                          </div>
+                          <div class='col-md-2'>
+                            {{f.poids}}
+                          </div>
+                          <div class='col-md-3'>
+                            {{f.date_prod}}
+                          </div>
+
+                        </div>
+
+                      </div>
+                      {% endfor %}
+
+
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                      <button type="submit" class="btn btn-primary" name="b-send">Confirmer</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- Fin du pop up de l'enfer // mdr le batard // -->
+
+            <!-- <script>
+              var $myGroup = $('#myGroup');
+                $myGroup.on('show.bs.collapse','.collapse', function() {
+                  $myGroup.find('.collapse.show').collapse('hide');
+              });
+            </script> -->
+
+            <div id="myGroup">
+              <div style="text-align:center; margin : 20px">
+                  <button class="btn btn-danger dropdown" data-toggle="collapse" data-target="#stock"><i class="icon-chevron-right"></i> Stock par parfum  </button>
+                  <button class="btn btn-danger dropdown" data-toggle="collapse" data-target="#liste"><i class="icon-chevron-right"></i> Liste des parfums </button>
+                  <button class="btn btn-danger dropdown" data-toggle="collapse" data-target="#total"><i class="icon-chevron-right"></i> Total des stocks </button>
+              </div>
+
+
+              <div class="accordion-group">
+              
+              <div class="collapse indent" id="stock" data-parent="#myGroup">
+                  <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A"> Stock par parfum
+                  </h3>
+                  <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000"> Sorbet </h4>
+                  <table class="table table-sm table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="tabHeaderStyle">Parfum</th>
+                        <th scope="col" class="tabHeaderStyle">Stock</th>
+                        <th scope="col" class="tabHeaderStyle">Stock prévisionnel</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for parfum in parfum_BDD %}
+                      {% if parfum.sorbet == True %}
+                      <tr>
+                        <th style="text-align:center" scope="row">{{parfum.parfum_text}}</th>
+                        <td style="text-align:center">{{ glace_BDD|count_in_stock:parfum.id }}</td>
+                        <td
+                          style="text-align:center; {% if glace_BDD|count_disponible:parfum.id == 0 %} color:red {% endif %}">
+                          {% if glace_BDD|count_todo2:parfum.id == 0 %} {{ glace_BDD|count_disponible:parfum.id }}
+                          {% else %}
+                          -{{glace_BDD|count_todo2:parfum.id}} {% endif %} </td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                  <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000"> Glace </h4>
+                  <table class="table table-sm table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="tabHeaderStyle">Parfum</th>
+                        <th scope="col" class="tabHeaderStyle">Stock</th>
+                        <th scope="col" class="tabHeaderStyle">Stock prévisionnel</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for parfum in parfum_BDD %}
+                      {% if parfum.sorbet == False %}
+                      <tr>
+                        <th style="text-align:center" scope="row">{{parfum.parfum_text}}</th>
+                        <td style="text-align:center">{{ glace_BDD|count_in_stock:parfum.id }}</td>
+                        <td
+                          style="text-align:center; {% if glace_BDD|count_disponible:parfum.id == 0 %} color:red {% endif %}">
+                          {% if glace_BDD|count_todo2:parfum.id == 0 %} {{ glace_BDD|count_disponible:parfum.id }}
+                          {% else %}
+                          -{{glace_BDD|count_todo2:parfum.id}} {% endif %} </td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+
+              <div class="collapse indent" id="liste" data-parent="#myGroup">
+                <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A"> Liste des parfums
+                </h3>
+                <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000"> Sorbet
+                </h4>
+                {% for parfum in parfum_BDD%}
+                {% if parfum.sorbet == True %}
+                <div id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="headingOne">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#demo-{{parfum.id}}"
+                          aria-expanded="true" aria-controls="demo-{{parfum.id}}">
+                          {{ parfum }}
+                        </button>
+                      </h5>
+                    </div>
+
+                    <div id="demo-{{parfum.id}}" class="collapse assign-me" aria-labelledby="headingOne"
+                      data-parent="#accordion">
+                      <div class="card-body">
+                        <table class="table table-sm table-striped">
+                          <thead>
+                            <tr>
+                              <th scope="col" style="text-align:center">Parfum</th>
+                              <td style="text-align:center">Poids</td>
+                              <td style="text-align:center">Date de Production</td>
+                              <td style="text-align:center">DLC</td>
+                              <td style="text-align:center">Statut</td>
+                              <td style="text-align:center">N° de Lot</td>
+                              <td style="text-align:center">Commandé par</td>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for g in glace_BDD|in_category:parfum.id %}
+                            {% if g.status == 'Ordered' or g.status == 'Disponible' %}
+                            <tr>
+                              <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.parfum_text}}</th>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.poids}}kg</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.date_prod | date:'d/m/Y'}}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.date_dlc | date:'d/m/Y'}}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.status }}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.no_lot }}</td>
+                              {% if g.status == "Ordered"%}<td style="text-align:center" {% if g.status == 'Todo'%}
+                                class='table-danger' {% elif g.status == 'Ordered' %} class='table-warning' {% else %}
+                                class='table-success' {% endif %}>{{ g.franchise_name }}</td>{% endif %}
+
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #000000"> Glace
+                </h4>
+                {% for parfum in parfum_BDD%}
+                {% if parfum.sorbet == False %}
+                <div id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="headingOne">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#demo-{{parfum.id}}"
+                          aria-expanded="true" aria-controls="demo-{{parfum.id}}">
+                          {{ parfum }}
+                        </button>
+                      </h5>
+                    </div>
+
+                    <div id="demo-{{parfum.id}}" class="collapse assign-me" aria-labelledby="headingOne"
+                      data-parent="#accordion">
+                      <div class="card-body">
+                        <table class="table table-sm table-striped">
+                          <thead>
+                            <tr>
+                              <th scope="col" style="text-align:center">Parfum</th>
+                              <td style="text-align:center">Poids</td>
+                              <td style="text-align:center">Date de Production</td>
+                              <td style="text-align:center">DLC</td>
+                              <td style="text-align:center">Statut</td>
+                              <td style="text-align:center">N° de Lot</td>
+                              <td style="text-align:center">Commandé par</td>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for g in glace_BDD|in_category:parfum.id %}
+                            {% if g.status == 'Ordered' or g.status == 'Disponible' %}
+                            <tr>
+                              <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.parfum_text}}</th>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.poids}}kg</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.date_prod | date:'d/m/Y'}}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.date_dlc | date:'d/m/Y'}}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.status }}</td>
+                              <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                                {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                                {% endif %}>{{g.no_lot }}</td>
+                              {% if g.status == "Ordered"%}<td style="text-align:center" {% if g.status == 'Todo'%}
+                                class='table-danger' {% elif g.status == 'Ordered' %} class='table-warning' {% else %}
+                                class='table-success' {% endif %}>{{ g.franchise_name }}</td>{% endif %}
+
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+
+              <div class="collapse indent show" id="total" data-parent="#myGroup">
+                <h3 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A"> Total des stocks
+                </h3>
+                <p style="text-align:center; font-family: 'Quicksand', sans-serif; color : red"> Les bacs dont le poids
+                  et
+                  le
+                  numéro de lot sont manquants sont en rouge</p>
+
+                <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A"> Sorbet </h4>
+                <table id="s2" class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="text-align:center" class="tabHeaderStyle">ID</th>
+                      <th scope="col" style="text-align:center" class="tabHeaderStyle">Parfum</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Poids</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Date de Production</th>
+                      <td style="text-align:center" class="tabHeaderStyle">DLC</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Statut</th>
+                      <td style="text-align:center" class="tabHeaderStyle">N° de Lot</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Commandé par</th>
+                      <td style="text-align:center" class="tabHeaderStyle"><i class="fas fa-times"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for parfum in parfum_BDD %}
+                    {% if parfum.sorbet == True%}
+                    {% for g in glace_BDD|in_category:parfum.id %}
+                    {% if g.status == 'Ordered' or g.status == 'Disponible'%}
+                    <tr>
+                      <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        <a href='admin/Stock/glace/{{g.id}}/change/' target="_blank">{{g.id}}</a></th>
+                      <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.parfum_text}}</th>
+                      <td style="text-align:center; {% if g.poids == 0 %}color:red{% endif %}"
+                        {% if g.status == 'Todo'%} class='table-danger' {% elif g.status == 'Ordered' %}
+                        class='table-warning' {% else %} class='table-success' {% endif %}>
+                        {{g.poids}}kg</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.date_prod | date:'d/m/Y'}}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.date_dlc | date:'d/m/Y'}}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.status }}</td>
+                      <td style="text-align:center; {% if g.poids == 0 %}color:red{% endif %}"
+                        {% if g.status == 'Todo'%} class='table-danger' {% elif g.status == 'Ordered' %}
+                        class='table-warning' {% else %} class='table-success' {% endif %}>
+                        {{g.no_lot }}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {% if g.status == "Ordered"%}{{ g.franchise_name }}{% endif %}</td>
+
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        <form action="{% url 'delete_stock' g.id %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onClick="window.location.reload()"><i
+                              class="fas fa-times"></i></button>
+                        </form>
+                      </td>
+
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+
+
+                <h4 style="text-align:center; font-family: 'Quicksand', sans-serif; color : #EB008A"> Glace </h4>
+                <table id="s2" class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="text-align:center" class="tabHeaderStyle">ID</th>
+                      <th scope="col" style="text-align:center" class="tabHeaderStyle">Parfum</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Poids</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Date de Production</th>
+                      <td style="text-align:center" class="tabHeaderStyle">DLC</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Statut</th>
+                      <td style="text-align:center" class="tabHeaderStyle">N° de Lot</th>
+                      <td style="text-align:center" class="tabHeaderStyle">Commandé par</th>
+                      <td style="text-align:center" class="tabHeaderStyle"><i class="fas fa-times"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for parfum in parfum_BDD %}
+                    {% if parfum.sorbet == False%}
+                    {% for g in glace_BDD|in_category:parfum.id %}
+                    {% if g.status == 'Ordered' or g.status == 'Disponible'%}
+                    <tr>
+                      <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        <a href='admin/Stock/glace/{{g.id}}/change/' target="_blank">{{g.id}}</a></th>
+                      <th style="text-align:center" scope="row" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.parfum_text}}</th>
+                      <td style="text-align:center; {% if g.poids == 0 %}color:red{% endif %}"
+                        {% if g.status == 'Todo'%} class='table-danger' {% elif g.status == 'Ordered' %}
+                        class='table-warning' {% else %} class='table-success' {% endif %}>
+                        {{g.poids}}kg</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.date_prod | date:'d/m/Y'}}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.date_dlc | date:'d/m/Y'}}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        {{g.status }}</td>
+                      <td style="text-align:center; {% if g.poids == 0 %}color:red{% endif %}"
+                        {% if g.status == 'Todo'%} class='table-danger' {% elif g.status == 'Ordered' %}
+                        class='table-warning' {% else %} class='table-success' {% endif %}>
+                        {{g.no_lot }}</td>
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else   %} class='table-success'
+                        {% endif %}>
+                        {% if g.status == "Ordered"%}{{ g.franchise_name }}{% endif %}</td>
+
+                      <td style="text-align:center" {% if g.status == 'Todo'%} class='table-danger'
+                        {% elif g.status == 'Ordered' %} class='table-warning' {% else %} class='table-success'
+                        {% endif %}>
+                        <form action="{% url 'delete_stock' g.id %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onClick="window.location.reload()"><i
+                              class="fas fa-times"></i></button>
+                        </form>
+                      </td>
+                    </tr>
+
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+      </section>
+  </section>
+</body>
+
+</html>

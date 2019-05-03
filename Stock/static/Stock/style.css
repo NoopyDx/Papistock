@@ -1,0 +1,22 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin-top:76px;
+    background-color:rgb(89,82,77);
+}
+
+.tabHeaderStyle {
+    color:rgb(187, 187, 187);
+    font-size : 20px;
+    background-color: rgb(36, 36, 36);
+    vertical-align : middle;
+    /* A REGLER */
+    text-align: center;
+}
+
+.collapse.in { 
+    min-height: 50px;
+    border: 1px solid blue; 
+}
