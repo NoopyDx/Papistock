@@ -1,0 +1,1 @@
+web: gunicorn Papistock.wsgi --log-file -

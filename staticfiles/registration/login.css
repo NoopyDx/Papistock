@@ -1,0 +1,44 @@
+body {
+    background: #e5e3e1 !important;
+}
+.card {
+    color: #fff;
+    border: 1px solid #46403c;
+    background: #59524c;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+.card-login {
+    
+    max-width: 30rem;
+}
+
+.card-header {
+    
+    background:#59524c;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: 600 !important;
+    margin-top: 10px;
+    border-bottom: 0;
+}
+
+.card-footer {
+    background: #59524c;
+}
+
+p {
+    color : #fff;
+}
+
+a {
+    color : #fff;
+    font-size: 14px;
+}
+
+a:hover {
+    color: #fff;
+}

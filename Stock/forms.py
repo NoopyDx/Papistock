@@ -11,12 +11,11 @@ from crispy_forms.layout import Layout, Fieldset, Div, Field
 # Formulaire ajout stock
 class ProdForm(forms.Form):
    BDD_PARFUM = []
-   choices = [('Sorbet', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=True).order_by('parfum_text')])]+[('Glace', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=False).order_by('parfum_text')])]
-   parfum_text = forms.CharField(label="Parfum", required=True,widget=forms.Select(attrs={'class':'form-control'}, choices=choices ))
+   #choices = [('Sorbet', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=True).order_by('parfum_text')])]+[('Glace', [(n.id, n.parfum_text) for n in Parfum.objects.all().filter(sorbet=False).order_by('parfum_text')])]
+   #parfum_text = forms.CharField(label="Parfum", required=True,widget=forms.Select(attrs={'class':'form-control'}, choices=choices ))
    no_lot = forms.CharField(label="N° de lot", initial = "", widget=TextInput(attrs={'size':10,'class':'form-control'}))
    poids = forms.IntegerField(label="Poids (g)", initial=1000, widget=NumberInput(attrs={'size':3,'class':'form-control span2'}))
    date_prod = forms.DateField(label='Date de production', initial = datetime.now(), widget=DatePickerInput(format='%d/%m/%Y',attrs={'class':'form-control'}))
-
 
 #Formulaire de commande
 #Cette structure permet de générer un nombre de field dépendant de l'attribut 'questions'
@@ -29,10 +28,8 @@ class OrderForm(forms.Form):
         for q in questions:
             self.fields[str(next(iter_BDD))] = forms.IntegerField(label = q, initial = 0, min_value=0, widget=forms.TextInput(attrs={'class':'form-control span3'}))
 
-
 class AuthForm(forms.Form):
    franchise_name = forms.ModelChoiceField(label="Franchise", required = True, queryset=User.objects.filter(groups__name='Franchises'), widget=forms.Select(attrs={'class':'form-control'}))
-
 
 class EtiForm(forms.Form):
    def __init__(self, *args, **kwargs):
@@ -42,7 +39,6 @@ class EtiForm(forms.Form):
       iter_BDD = iter(Parfum.objects.all().order_by('parfum_text'))
       for q in questions:
          self.fields[str(next(iter_BDD))] = forms.IntegerField(label = q, initial = 0, min_value=0, widget=forms.TextInput(attrs={'class':'form-control span3'}))
-
 
 class numLotForm(forms.Form):
    n_lot = forms.CharField(label="N° de lot", initial = "", widget=TextInput(attrs={'size':10}))
