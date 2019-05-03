@@ -78,10 +78,15 @@ WSGI_APPLICATION = 'Papistock.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+#postgres://nmtnlpleemddse:0c71c9a5a385520324508c7fb6fb7b263a48ced28cfd964752cfad3fa91f5b65@ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d11k00cp9fso70
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd11k00cp9fso70',
+        'USER': 'nmtnlpleemddse',
+        'PASSWORD': '0c71c9a5a385520324508c7fb6fb7b263a48ced28cfd964752cfad3fa91f5b65',
+        'HOST': 'c2-54-247-70-127.eu-west-1.compute.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
