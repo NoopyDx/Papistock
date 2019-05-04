@@ -138,11 +138,11 @@ def accueil(request):
         #On envoie vers la landing page
         messages.info(request, 'Votre commande a bien été transmise ! \n Un email récapitulatif de votre commande vous a été envoyé.')
         try:
-            send_mail(sujet, content, 'ed.lenotre@gmail.com' ,['spongebob99@yopmail.com'])
+            send_mail(sujet, content, 'commandes@papilla.fr' ,['spongebob99@yopmail.com'])
             print("DEBUG ========> MAIL ENVOYE")
             # Envoi courriel confirmation
             print(client.email)
-            send_mail(subject_confirmed, content_confirmed, 'Papilla Commande', [client.email])
+            send_mail(subject_confirmed, content_confirmed, 'commandes@papilla.fr', [client.email])
 
         except BadHeaderError:
             return HttpResponse('Invalid header found.')
