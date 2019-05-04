@@ -50,11 +50,11 @@ def test(request, parfum_text, number):
         no_lot = '0/0'
         date_prod = datetime.datetime.now()
         auto_id = Parfum.objects.filter(parfum_text=parfum).values('id')
-        pre_command_time = Parfum.objects.filter(parfum_text=parfum).values('commande_time')
         #On attaque la BDD
         if Glace.objects.filter(status = 'Todo', parfum_text = parfum).count()>0:
             todo_list = Glace.objects.filter(status = 'Todo', parfum_text = parfum).order_by('commande_time')
             id_to_delete = todo_list[0].id
+            pre_command_time = todo_list[0].commande_time
             franchise_command = Glace.objects.filter(id=id_to_delete).values('franchise_name')
             new_entry = Glace(parfum_text=parfum, parfum_id=next(iter(auto_id))['id'],commande_time=pre_command_time, poids=poids/1000, date_prod=date_prod,date_dlc = date_prod+datetime.timedelta(6*365/12), no_lot=no_lot, status = 'Ordered', franchise_name = next(iter(franchise_command))['franchise_name'])
             Glace.objects.filter(id=id_to_delete).delete()
