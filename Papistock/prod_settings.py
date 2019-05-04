@@ -146,7 +146,7 @@ EMAIL_HOST = 'ssl0.ovh.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'commandes@papilla.fr'
-EMAIL_HOST_PASSWORD = 'sendermail'
+EMAIL_HOST_PASSWORD = 'sportco06'
 
 # EMAIL_HOST = 'localhost'
 # EMAIL_PORT = 1025
