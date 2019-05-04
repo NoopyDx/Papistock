@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'iabfh$4rdtn%($_0cuxtf9rd0dl5*j($fh62db^3z(ei80+ss+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.1.31','https://papistock.herokuapp.com']
 
